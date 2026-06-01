@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
 export let smoother: ScrollSmoother;
 
 const Navbar = () => {
-  useEffect(() => {
+  useLayoutEffect(() => {
     smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
@@ -19,6 +19,8 @@ const Navbar = () => {
       autoResize: true,
       ignoreMobileResize: true,
     });
+
+    ScrollTrigger.refresh();
 
     smoother.scrollTop(0);
     smoother.paused(true);
@@ -43,14 +45,14 @@ const Navbar = () => {
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
-          Logo
+          Eshan Shukla
         </a>
         <a
-          href="mailto:example@mail.com"
+          href="mailto:eshan90shukla@gmail.com"
           className="navbar-connect"
           data-cursor="disable"
         >
-          example@mail.com
+          eshan90shukla@gmail.com
         </a>
         <ul>
           <li>

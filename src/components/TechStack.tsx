@@ -11,18 +11,69 @@ import {
   RapierRigidBody,
 } from "@react-three/rapier";
 
-const textureLoader = new THREE.TextureLoader();
-const imageUrls = [
-  "/images/react2.webp",
-  "/images/next2.webp",
-  "/images/node2.webp",
-  "/images/express.webp",
-  "/images/mongo.webp",
-  "/images/mysql.webp",
-  "/images/typescript.webp",
-  "/images/javascript.webp",
+const technologies = [
+  { name: "CI/CD", bgColor: "#E24A29", textColor: "#FFFFFF" },
+  { name: "Kubernetes", bgColor: "#326CE5", textColor: "#FFFFFF" },
+  { name: "Docker", bgColor: "#2496ED", textColor: "#FFFFFF" },
+  { name: "Ansible", bgColor: "#000000", textColor: "#FFFFFF" },
+  { name: "Jenkins", bgColor: "#D24939", textColor: "#FFFFFF" },
+  { name: "Linux", bgColor: "#FFD133", textColor: "#111111" },
+  { name: "Bash", bgColor: "#4EAA25", textColor: "#FFFFFF" },
+  { name: "AWS", bgColor: "#FF9900", textColor: "#111111" },
+  { name: "Python", bgColor: "#3776AB", textColor: "#FFFFFF" },
+  { name: "AI / ML", bgColor: "#8A2BE2", textColor: "#FFFFFF" },
+  { name: "MySQL", bgColor: "#00758F", textColor: "#FFFFFF" },
+  { name: "JSON", bgColor: "#2F2F2F", textColor: "#F1C40F" },
+  { name: "Terraform", bgColor: "#7B42BC", textColor: "#FFFFFF" }
 ];
-const textures = imageUrls.map((url) => textureLoader.load(url));
+
+const createTechTexture = (tech: { name: string; bgColor: string; textColor: string }) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return new THREE.Texture();
+
+  // Background circle
+  ctx.fillStyle = tech.bgColor;
+  ctx.beginPath();
+  ctx.arc(256, 256, 250, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Outer border
+  ctx.strokeStyle = "#FFFFFF";
+  ctx.lineWidth = 14;
+  ctx.beginPath();
+  ctx.arc(256, 256, 243, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Inner rings/embellishments for depth & premium aesthetic
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.arc(256, 256, 215, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Text setup
+  ctx.fillStyle = tech.textColor;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  let fontSize = 72;
+  ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+
+  const maxTextWidth = 360;
+  while (ctx.measureText(tech.name).width > maxTextWidth && fontSize > 24) {
+    fontSize -= 4;
+    ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+  }
+
+  ctx.fillText(tech.name, 256, 256);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+};
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
@@ -129,41 +180,46 @@ const TechStack = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const threshold = document
-        .getElementById("work")!
-        .getBoundingClientRect().top;
-      setIsActive(scrollY > threshold);
+      const techstack = document.querySelector(".techstack");
+      if (!techstack) return;
+      const rect = techstack.getBoundingClientRect();
+      setIsActive(rect.top < window.innerHeight);
     };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
     document.querySelectorAll(".header a").forEach((elem) => {
       const element = elem as HTMLAnchorElement;
       element.addEventListener("click", () => {
         const interval = setInterval(() => {
           handleScroll();
-        }, 10);
+        }, 20);
         setTimeout(() => {
           clearInterval(interval);
         }, 1000);
       });
     });
-    window.addEventListener("scroll", handleScroll);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   const materials = useMemo(() => {
-    return textures.map(
-      (texture) =>
-        new THREE.MeshPhysicalMaterial({
-          map: texture,
-          emissive: "#ffffff",
-          emissiveMap: texture,
-          emissiveIntensity: 0.3,
-          metalness: 0.5,
-          roughness: 1,
-          clearcoat: 0.1,
-        })
-    );
+    return technologies.map((tech) => {
+      const texture = createTechTexture(tech);
+      return new THREE.MeshPhysicalMaterial({
+        map: texture,
+        emissive: "#ffffff",
+        emissiveMap: texture,
+        emissiveIntensity: 0.15,
+        metalness: 0.4,
+        roughness: 0.1,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.1,
+      });
+    });
   }, []);
 
   return (

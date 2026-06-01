@@ -6,9 +6,13 @@ const About = () => {
       <div className="about-me">
         <h3 className="title">About Me</h3>
         <p className="para">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic quis
-          dolores numquam iusto Ratione earum ducimus autem id iure pariatur
-          dolorum quae maiores.
+          Results-driven DevOps Engineer with 1+ year of hands-on experience
+          building, deploying, and managing scalable cloud and automation
+          solutions. Strong foundation in cloud computing, CI/CD, infrastructure
+          automation, and system optimization. Passionate about implementing
+          high-availability systems, streamlining development workflows, and
+          leveraging AI-driven technologies to build modern, intelligent
+          software solutions.
         </p>
       </div>
     </div>
